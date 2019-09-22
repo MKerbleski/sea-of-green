@@ -3,7 +3,6 @@ const router = express.Router();
 const { exec } = require('child_process')
 const fs = require('fs')
 const path = require('path')
-const fsPromises = require('fs').promises
 
 const git = (command, canReject=false) => {
     return new Promise((resolve, reject) => {
@@ -19,26 +18,9 @@ const git = (command, canReject=false) => {
     })
 }
 
-const check = (numberOfCommits) => {
-    fs()
-}
-
 const doesPathExist = (path) => {
     return new Promise((resolve, reject) => {
         resolve(fs.existsSync(path))
-    })
-}
-
-const createFolder = (path) => {
-    return new Promise((resolve, reject) => {
-        fs.mkdir(path, err => {
-            if(err){
-                console.log('err in mkdir', err)
-                reject(err)
-            } else {
-                resolve()
-            }
-        })
     })
 }
 
@@ -46,7 +28,6 @@ const createFile = (path, content=null) => {
     if(!content){
         content = Date.now()
     }
-    console.log('path', content, path)
     return new Promise((resolve, reject) => {
         fs.writeFile(path, `change made at: ${content}\n`, (err) => {
             if(err){
@@ -58,11 +39,11 @@ const createFile = (path, content=null) => {
         })
     })
 }
+
 const appendFile = (path, content=null) => {
     if(!content){
         content = Date.now()
     }
-    console.log('path', content, path)
     return new Promise((resolve, reject) => {
         fs.appendFile(path, `change made at: ${content}\n`, (err) => {
             if(err){
@@ -77,49 +58,25 @@ const appendFile = (path, content=null) => {
 
 router.get('/git/:numOfCommits', async (req, res, next) => {
     try {
-        console.log('git')
         const stopIfFails = true
         const folderLocation = path.join(__dirname + '/randomCommits.txt')
 
         await git('git status', stopIfFails).catch(err => { throw 'failed to aquire status'})
-        console.log('folderLocation', folderLocation)
         const fileExists = await doesPathExist(folderLocation)
-        console.log('fileExists', fileExists)
         if(!fileExists){
             await createFile(folderLocation).catch(err => { throw 'failed to make folder'})
         }
         
-
-        
         let n = req.params.numOfCommits
+
         while(n !== 0){
             await appendFile(`timestamps.txt`).catch(err => { throw ' failed to write file'})
-            await git('git add .')
-            await git('git commit -m"hello, git."')
-            // console.log('tryAdd', tryAdd)
-            // console.log('status', status)
+            await git('git add .').catch(err => { throw ' failed to add files'})
+            await git('git commit -m"hello, git."').catch(err => { throw ' failed to commit'})
             n--    
         }
-        const status = await git('git status', stopIfFails).catch(err => {throw 'failed to aquire status'})
-        console.log('n', n) 
-        // if(tryCommit.err){
-        //     console.log('err', tryCommit.msg)
-        //     throw 'error commiting'
-        // } else {
-        //     console.log('isCool', tryCommit.msg)
-        // }
-        await git('git push origin HEAD')
 
-        const gitLog = await git('git log')
-        // .then(res => {
-        //     console.log('res', res)
-        // }).catch(err => {
-        //     console.log('err at command', err)
-        //     // throw err
-        // })
-        console.log('===========TWO===========')
-        // await git('git add .')
-        // await git('git reset HEAD')
+        await git('git push origin HEAD')
         res.status(200).send(`commits made`)
     } catch (err) {
         console.log('endpoint catch', err)
