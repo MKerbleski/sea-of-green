@@ -85,26 +85,29 @@ router.get('/git', async (req, res, next) => {
         console.log('folderLocation', folderLocation)
         const fileExists = await doesPathExist(folderLocation)
         console.log('fileExists', fileExists)
-        if(fileExists){
-            await appendFile(`timestamps.txt`).catch(err => { throw ' failed to write file'})
-        } else {
+        if(!fileExists){
             await createFile(folderLocation).catch(err => { throw 'failed to make folder'})
-            // await makeChange('/randomCommits')
         }
         
+
+        await appendFile(`timestamps.txt`).catch(err => { throw ' failed to write file'})
         const tryAdd = await git('git add .')
+
         console.log('tryAdd', tryAdd)
+        
         const status = await git('git status', stopIfFails).catch(err => {throw 'failed to aquire status'})
         console.log('status', status)
         
-        const tryCommit = await git('git commit -m"test"')
+        const tryCommit = await git('git commit -m"hello, git."')
 
+        
         if(tryCommit.err){
             console.log('err', tryCommit.msg)
             throw 'error commiting'
         } else {
             console.log('isCool', tryCommit.msg)
         }
+        await git('git push origin HEAD')
 
         const gitLog = await git('git log')
         // .then(res => {
