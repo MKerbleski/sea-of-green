@@ -42,7 +42,7 @@ const createFolder = (path) => {
     })
 }
 
-const makeChange = (path, content=null) => {
+const createFile = (path, content=null) => {
     if(!content){
         content = Date.now()
     }
@@ -58,21 +58,37 @@ const makeChange = (path, content=null) => {
         })
     })
 }
+const appendFile = (path, content=null) => {
+    if(!content){
+        content = Date.now()
+    }
+    console.log('path', content, path)
+    return new Promise((resolve, reject) => {
+        fs.write(path, `change made at: ${content}\n`, (err) => {
+            if(err){
+                console.log('Failed to write file', err)
+                reject(err)
+            } else {
+                resolve()
+            }
+        })
+    })
+}
 
 router.get('/git', async (req, res, next) => {
     try {
         console.log('git')
         const stopIfFails = true
-        const folderLocation = path.join(__dirname + '/randomCommits')
+        const folderLocation = path.join(__dirname + '/randomCommits.txt')
 
         await git('git status', stopIfFails).catch(err => { throw 'failed to aquire status'})
         console.log('folderLocation', folderLocation)
-        const folderExists = await doesPathExist(folderLocation)
-        console.log('folderExists', folderExists)
-        if(folderExists){
+        const fileExists = await doesPathExist(folderLocation)
+        console.log('fileExists', fileExists)
+        if(fileExists){
             await makeChange(`timestamps.txt`).catch(err => { throw ' failed to write file'})
         } else {
-            await createFolder(folderLocation).catch(err => { throw 'failed to make folder'})
+            await createFile(folderLocation).catch(err => { throw 'failed to make folder'})
             // await makeChange('/randomCommits')
         }
         
