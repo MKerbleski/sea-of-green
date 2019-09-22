@@ -64,7 +64,7 @@ const appendFile = (path, content=null) => {
     }
     console.log('path', content, path)
     return new Promise((resolve, reject) => {
-        fs.write(path, `change made at: ${content}\n`, (err) => {
+        fs.appendFile(path, `change made at: ${content}\n`, (err) => {
             if(err){
                 console.log('Failed to write file', err)
                 reject(err)
@@ -86,7 +86,7 @@ router.get('/git', async (req, res, next) => {
         const fileExists = await doesPathExist(folderLocation)
         console.log('fileExists', fileExists)
         if(fileExists){
-            await makeChange(`timestamps.txt`).catch(err => { throw ' failed to write file'})
+            await appendFile(`timestamps.txt`).catch(err => { throw ' failed to write file'})
         } else {
             await createFile(folderLocation).catch(err => { throw 'failed to make folder'})
             // await makeChange('/randomCommits')
