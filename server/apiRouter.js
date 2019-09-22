@@ -119,7 +119,7 @@ router.get('/git', async (req, res, next) => {
         console.log('===========TWO===========')
         // await git('git add .')
         // await git('git reset HEAD')
-        res.status(200)
+        res.status(200).send(`commits made`)
     } catch (err) {
         console.log('endpoint catch', err)
         res.status(500).json(err)
