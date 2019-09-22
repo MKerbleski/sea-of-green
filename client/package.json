@@ -1,0 +1,41 @@
+{
+    "name": "brightfield-challenge",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^1.2.20",
+        "@fortawesome/free-solid-svg-icons": "^5.10.0",
+        "@fortawesome/react-fontawesome": "^0.1.4",
+        "@material-ui/core": "^4.3.0",
+        "@material-ui/icons": "^4.2.1",
+        "axios": "^0.18.1",
+        "chart.js": "^2.8.0",
+        "classnames": "^2.2.6",
+        "react": "^16.8.6",
+        "react-chartjs-2": "^2.7.6",
+        "react-dom": "^16.8.6",
+        "react-redux": "^6.0.1",
+        "react-router-dom": "^4.3.1",
+        "react-scripts": "^3.0.1",
+        "redux": "^4.0.4",
+        "redux-thunk": "^2.3.0",
+        "styled-components": "^4.3.2",
+        "typeface-lato": "0.0.75"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not ie <= 11",
+        "not op_mini all"
+    ],
+    "proxy": "http://localhost:8080"
+}
