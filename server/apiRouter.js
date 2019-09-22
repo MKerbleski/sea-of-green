@@ -75,7 +75,7 @@ const appendFile = (path, content=null) => {
     })
 }
 
-router.get('/git', async (req, res, next) => {
+router.get('/git/:numOfCommits', async (req, res, next) => {
     try {
         console.log('git')
         const stopIfFails = true
@@ -90,23 +90,24 @@ router.get('/git', async (req, res, next) => {
         }
         
 
-        await appendFile(`timestamps.txt`).catch(err => { throw ' failed to write file'})
-        const tryAdd = await git('git add .')
-
-        console.log('tryAdd', tryAdd)
         
-        const status = await git('git status', stopIfFails).catch(err => {throw 'failed to aquire status'})
-        console.log('status', status)
-        
-        const tryCommit = await git('git commit -m"hello, git."')
-
-        
-        if(tryCommit.err){
-            console.log('err', tryCommit.msg)
-            throw 'error commiting'
-        } else {
-            console.log('isCool', tryCommit.msg)
+        let n = req.params.numOfCommits
+        while(n !== 0){
+            await appendFile(`timestamps.txt`).catch(err => { throw ' failed to write file'})
+            await git('git add .')
+            await git('git commit -m"hello, git."')
+            // console.log('tryAdd', tryAdd)
+            // console.log('status', status)
+            n--    
         }
+        const status = await git('git status', stopIfFails).catch(err => {throw 'failed to aquire status'})
+        console.log('n', n) 
+        // if(tryCommit.err){
+        //     console.log('err', tryCommit.msg)
+        //     throw 'error commiting'
+        // } else {
+        //     console.log('isCool', tryCommit.msg)
+        // }
         await git('git push origin HEAD')
 
         const gitLog = await git('git log')
