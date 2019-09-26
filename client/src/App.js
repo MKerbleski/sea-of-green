@@ -15,7 +15,9 @@ export default class App extends React.Component{
 
       return (
         <AppDiv>
-         Blank App
+         This application will make as many commits as you want 
+         <input></input>
+         <button onClick={() => { }}>COMMIT!</button>
         </AppDiv>
     );
   }
