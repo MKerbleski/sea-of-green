@@ -125,8 +125,8 @@ const makeNumOfCommits = (user) => {
                 await git('git add .').catch(err => { 
                     console.log(err)
                     throw ' failed to add files'})
-                console.log(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>`)
-                await git(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>`).catch(err => { 
+                console.log(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`)
+                await git(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`).catch(err => { 
                     console.log(err)
                     throw ' failed to commit'})
                 n--    
