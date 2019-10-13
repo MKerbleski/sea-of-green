@@ -76,13 +76,13 @@ const runEveryDay = async () => {
             console.log('err', err)
         })
         console.log('runn', usersToCommit)
-        setTimeout(async function() {
+        // setTimeout(async function() {
             usersToCommit.forEach(user => {
                 makeNumOfCommits(user)
             })
             // reset();              //      <-- This is the function being called at midnight.
-            runEveryDay();    //      Then, reset again next midnight.
-        }, 1000*10);
+            // runEveryDay();    //      Then, reset again next midnight.
+        // }, 1000*10);
     const endTime = Date.now()
     const totalTime = endTime - startTime
         console.log("totalTime", totalTime, 'ms' )
