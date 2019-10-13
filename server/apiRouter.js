@@ -58,55 +58,42 @@ const appendFile = (path, content=null) => {
 }
 
 const runEveryDay = async () => {
-    const startTime = Date.now()
-    console.log('runEveryDay')
-        var now = new Date();
-        var noon = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate() + 1, // the next day, ...
-            12, 0, 0 // ...at 00:00:00 hours
-        );
-        console.log('noon', noon)
-        console.log('now', now)
-        var msToNoon = noon.getTime() - now.getTime();
-        console.log('msToNoon', msToNoon)
-    
-        async function asyncForEach(array, callback) {
-            for (let index = 0; index < array.length; index++) {
-              await callback(array[index], index, array);
-            }
+
+    console.log('Begin Batch Commits')
+    var now = new Date();
+    var noon = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1, // the next day, ...
+        12, 0, 0 // ...at 00:00:00 hours
+    );
+
+    var msToNoon = noon.getTime() - now.getTime();
+
+    async function asyncForEach(array, callback) {
+        for (let index = 0; index < array.length; index++) {
+            await callback(array[index], index, array);
         }
-
-        await new Promise((res,rej) => {
-            setTimeout(async function() {
-                let totalCommits = 0
-                const usersToCommit = await getUsers().catch(err => {
-                    console.log('err', err)
-                })
-                // await new Promise((res,rej) => {
-                //     setTimeout(() => {
-                //         console.log('runn', usersToCommit)
-                //         res()
-                //     }, 3000)
-                // })
-
-                // await usersToCommit.forEach(async user => {
-                //     totalCommits += user.frequency
-                //     await makeNumOfCommits(user)
-                // })
-                await asyncForEach(usersToCommit, async (user) => {
-                    totalCommits += user.frequency
-                    await makeNumOfCommits(user)
-                })
-                const endTime = Date.now()
-                const totalTime = endTime - startTime
-                console.log(`completed ${totalCommits} commits for ${usersToCommit.length} users in `, totalTime, 'ms' )
-                // reset();              //      <-- This is the function being called at midnight.
-                runEveryDay();    //      Then, reset again next midnight.
-            }, 10000);
-        })
     }
+
+    await new Promise((res,rej) => {
+        const startTime = Date.now()
+        setTimeout(async function() {
+            let totalCommits = 0
+            const usersToCommit = await getUsers().catch(err => {
+                console.log('err', err)
+            })
+            await asyncForEach(usersToCommit, async (user) => {
+                totalCommits += user.frequency
+                await makeNumOfCommits(user)
+            })              //      <-- This is the function being called at midnight.
+            const endTime = Date.now()
+            const totalTime = endTime - startTime
+            console.log(`completed ${totalCommits} commits for ${usersToCommit.length} users in `, totalTime, 'ms' )
+            runEveryDay();    //      Then, reset again next midnight.
+        }, msToNoon);
+    })
+}
 
 runEveryDay()
 
