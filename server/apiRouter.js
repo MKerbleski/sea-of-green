@@ -3,7 +3,7 @@ const router = express.Router();
 const { exec } = require('child_process')
 const fs = require('fs')
 const path = require('path')
-const { addUser, updateUser } = require('../db/functions/users')
+const { addUser, updateUser, getUsers } = require('../db/functions/users')
 
 const git = (command, canReject=false) => {
     return new Promise((resolve, reject) => {
@@ -57,7 +57,8 @@ const appendFile = (path, content=null) => {
     })
 }
 
-const runEveryDay = () => {
+const runEveryDay = async () => {
+    const startTime = Date.now()
     console.log('runEveryDay')
         var now = new Date();
         var noon = new Date(
@@ -71,12 +72,20 @@ const runEveryDay = () => {
         var msToNoon = noon.getTime() - now.getTime();
         console.log('msToNoon', msToNoon)
     
-        setTimeout(function() {
-            console.log('runn')
-            makeNumOfCommits()
+        const usersToCommit = await getUsers().catch(err => {
+            console.log('err', err)
+        })
+        console.log('runn', usersToCommit)
+        setTimeout(async function() {
+            usersToCommit.forEach(user => {
+                makeNumOfCommits(user)
+            })
             // reset();              //      <-- This is the function being called at midnight.
             runEveryDay();    //      Then, reset again next midnight.
-        }, 4000000);
+        }, 1000*10);
+    const endTime = Date.now()
+    const totalTime = endTime - startTime
+        console.log("totalTime", totalTime, 'ms' )
 }
 
 runEveryDay()

@@ -8,13 +8,21 @@ const db = knex(dbConfig);
 
 module.exports = {
     addUser,
-    updateUser
+    updateUser,
+    getUsers,
 }
 
 function addUser(user){
     return db('users')
         .insert(user)
         .returning(user)
+}
+
+function getUsers(){
+    return new Promise((res, rej) => {
+        res(db('users')
+            .where('frequency', '>', 0))
+    })
 }
 
 function updateUser(user){
