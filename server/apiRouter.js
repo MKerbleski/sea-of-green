@@ -115,7 +115,9 @@ const makeNumOfCommits = (user) => {
             }
             
             let n = user.frequency
-            
+            if(user.frequency==0){
+                n=1
+            }
             while(n !== 0){
                 await appendFile(`timestamps.txt`).catch(err => { 
                     console.log(err)
