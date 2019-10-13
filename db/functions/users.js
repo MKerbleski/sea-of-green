@@ -10,18 +10,25 @@ module.exports = {
     addUser,
     updateUser,
     getUsers,
+    getUser,
 }
 
 function addUser(user){
     return db('users')
         .insert(user)
-        .returning(user)
 }
 
 function getUsers(){
     return new Promise((res, rej) => {
         res(db('users')
             .where('frequency', '>', 0))
+    })
+}
+
+function getUser(id){
+    return new Promise((res, rej) => {
+        res(db('users')
+            .where('id', '=', id))
     })
 }
 

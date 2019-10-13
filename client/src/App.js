@@ -3,25 +3,31 @@ import styled from 'styled-components'
 import axios from 'axios'
 
 export default function App (){
-	const [ email, setEmail ] = useState('')
-	const [ frequency, setFrequency ] = useState('')
-	const [ first, setFirst ] = useState('')
-	const [ last, setLast ] = useState('')
 	const [ update, setUpdate ] = useState(false)
+	const [state, setState] = useState({ email: '', frequency: '', first: '', last: '' })
+
+	const handleChange = e =>
+		setState({
+		...state,
+		[e.target.name]: e.target.value
+		})
+	
+	const { email, frequency, first, last } = state
 	
 	useEffect(() => {
 		let user = localStorage.getItem('user')
 		if(user){
-			setEmail(user.email)
-			setFrequency(user.frequency)
-			setFirst(user.first)
-			setLast(user.last)
-			setUpdate(true)
+			// setEmail(user.email)
+			// setFrequency(user.frequency)
+			// setFirst(user.first)
+			// setLast(user.last)
+			// setUpdate(true)
 		}
 	})
 
-	const handleSubmit = () => {
-		if(update){
+	const handleSubmit = (user) => {
+		console.log(email, this, user)
+		if(false){
 			axios.put('/api/user', {email, frequency, first, last}).then(res => {
 				console.log('res', res)
 				localStorage.setItem('user', res.data)
@@ -29,9 +35,12 @@ export default function App (){
 				console.log('err', err)
 			})
 		} else {
-			axios.post('/api/user', {email, frequency, first, last}).then(res => {
+			const { email, frequency, first, last } = state
+			const postObj = {email, frequency, first, last}
+			console.log('post', postObj)
+			axios.post('/api/user', postObj).then(res => {
 				console.log('res', res)
-				localStorage.setItem('user', res.data)
+				localStorage.setItem('user', {email, frequency, first, last})
 			}).catch(err => {
 				console.log('err', err)
 			})
@@ -39,7 +48,7 @@ export default function App (){
 	}
 
 	const commitNow = () => {
-		axios.get('/api/git/1', {email, frequency, first, last}).then(res => {
+		axios.get('/api/git/1/19').then(res => {
 			console.log('res', res)
 			alert('done')
 			localStorage.setItem('user', res.data)
@@ -48,19 +57,21 @@ export default function App (){
 		})
 	}
 
-	return (
+console.log(email, frequency, first, last)
+	
+	return (	
 		<AppDiv>
 			This application will make as many commits as you want
 			<label>Github First Name</label>
-			<input type="text" onChange={(e) => setFirst(e.target.value)} value={first}></input>
+			<input type="text" name="first" onChange={(e) => handleChange(e)} value={first}></input>
 			<label>Github Last Name</label>
-			<input type="text" onChange={(e) => setLast(e.target.value)} value={last}></input>
+			<input type="text" name="last" onChange={(e) => handleChange(e)} value={last}></input>
 			<label>Github Email Address</label>
-			<input type="email" onChange={(e) => setEmail(e.target.value)} value={email}></input>
+			<input type="email" name="email" onChange={(e) => handleChange(e)} value={email}></input>
 			<label>Make this many Commits</label>
-			<input type="number" onChange={(e) => setFrequency(e.target.value)} value={frequency}></input>
+			<input type="number" name="frequency" onChange={(e) => handleChange(e)} value={frequency}></input>
 			<label>every day</label>
-			<button onClick={handleSubmit}>Schedule</button>
+			<button onClick={() => handleSubmit(first, last, email, frequency)}>Schedule</button>
 			<button onClick={commitNow}>Do One Now</button>
 		</AppDiv>
 	);

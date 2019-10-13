@@ -3,7 +3,7 @@ const router = express.Router();
 const { exec } = require('child_process')
 const fs = require('fs')
 const path = require('path')
-const { addUser, updateUser, getUsers } = require('../db/functions/users')
+const { addUser, updateUser, getUsers, getUser } = require('../db/functions/users')
 
 const git = (command, canReject=false) => {
     return new Promise((resolve, reject) => {
@@ -99,7 +99,7 @@ runEveryDay()
 
 const makeNumOfCommits = (user) => {
     return new Promise(async (resolve, reject) => {
-        console.log('makeNumOfCommits')
+        console.log('start Git Process')
         try {
             const stopIfFails = true
             const folderLocation = path.join(__dirname + '/randomCommits.txt')
@@ -139,10 +139,14 @@ const makeNumOfCommits = (user) => {
     })
 }
 
-router.get('/git/:numOfCommits', async (req, res, next) => {
+router.get('/git/:numOfCommits/:userId', async (req, res, next) => {
     try {
-        console.log('get numOfCommits')
-        await makeNumOfCommits({first: 'Michael', last: 'Kerbleski', frequency: req.params.numOfCommits, email:'mkerbles@gmail.com'})
+        const user = await getUser(req.params.userId).catch(err => {
+            console.log('err', err)
+            throw err
+        })
+        console.log('get numOfCommits', user)
+        await makeNumOfCommits(user)
         res.status(200).send(`commits made`)
     } catch (err) {
         console.log('endpoint catch', err)
@@ -151,7 +155,7 @@ router.get('/git/:numOfCommits', async (req, res, next) => {
 })
 
 router.post('/user', async (req, res, next) => {
-    console.log('post user')
+    console.log('post user', req.body)
     try {
         addUser(req.body).then(user => {
             res.status(201).json(user)
