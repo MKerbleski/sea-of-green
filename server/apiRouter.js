@@ -99,7 +99,7 @@ runEveryDay()
 
 const makeNumOfCommits = (user) => {
     return new Promise(async (resolve, reject) => {
-        console.log('start Git Process')
+        console.log('start Git Process', user)
         try {
             const stopIfFails = true
             const folderLocation = path.join(__dirname + '/randomCommits.txt')
@@ -118,7 +118,7 @@ const makeNumOfCommits = (user) => {
             if(user.frequency==0){
                 n=1
             }
-            while(n !== 0){
+            while(n > 0){
                 await appendFile(`timestamps.txt`).catch(err => { 
                     console.log(err)
                     throw ' failed to write file'})
@@ -149,7 +149,7 @@ router.get('/git/:numOfCommits/:userId', async (req, res, next) => {
             throw err
         })
         console.log('get numOfCommits', user[0])
-        await makeNumOfCommits(user)
+        await makeNumOfCommits(user[0])
         res.status(200).send(`commits made`)
     } catch (err) {
         console.log('endpoint catch', err)
