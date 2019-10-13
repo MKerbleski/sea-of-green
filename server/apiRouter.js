@@ -145,7 +145,7 @@ router.get('/git/:numOfCommits/:userId', async (req, res, next) => {
             console.log('err', err)
             throw err
         })
-        console.log('get numOfCommits', user)
+        console.log('get numOfCommits', user[0])
         await makeNumOfCommits(user)
         res.status(200).send(`commits made`)
     } catch (err) {
