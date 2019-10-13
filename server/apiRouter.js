@@ -72,21 +72,30 @@ const runEveryDay = async () => {
         var msToNoon = noon.getTime() - now.getTime();
         console.log('msToNoon', msToNoon)
     
-        setTimeout(async function() {
-            const usersToCommit = await getUsers().catch(err => {
-                console.log('err', err)
-            })
-            console.log('runn', usersToCommit)
-            usersToCommit.forEach(user => {
-                makeNumOfCommits(user)
-            })
-            // reset();              //      <-- This is the function being called at midnight.
-            runEveryDay();    //      Then, reset again next midnight.
-        }, 1000*10);
-    const endTime = Date.now()
-    const totalTime = endTime - startTime
-        console.log("totalTime", totalTime, 'ms' )
-}
+        await new Promise((res,rej) => {
+            setTimeout(async function() {
+                let totalCommits = 0
+                const usersToCommit = await getUsers().catch(err => {
+                    console.log('err', err)
+                })
+                // await new Promise((res,rej) => {
+                //     setTimeout(() => {
+                //         console.log('runn', usersToCommit)
+                //         res()
+                //     }, 3000)
+                // })
+                usersToCommit.forEach(async user => {
+                    totalCommits += user.frequency
+                    await makeNumOfCommits(user)
+                })
+                // reset();              //      <-- This is the function being called at midnight.
+                runEveryDay();    //      Then, reset again next midnight.
+                const endTime = Date.now()
+                const totalTime = endTime - startTime
+                console.log(`completed ${totalCommits} for ${usersToCommit.length}`, totalTime, 'ms' )
+            }, 10000);
+        })
+    }
 
 runEveryDay()
 
