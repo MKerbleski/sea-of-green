@@ -3,6 +3,7 @@ const router = express.Router();
 const { exec } = require('child_process')
 const fs = require('fs')
 const path = require('path')
+const { addUser, updateUser } = require('../db/functions/users')
 
 const git = (command, canReject=false) => {
     return new Promise((resolve, reject) => {
@@ -56,28 +57,102 @@ const appendFile = (path, content=null) => {
     })
 }
 
+const runEveryDay = () => {
+    console.log('runEveryDay')
+        var now = new Date();
+        var noon = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate() + 1, // the next day, ...
+            12, 0, 0 // ...at 00:00:00 hours
+        );
+        console.log('noon', noon)
+        console.log('now', now)
+        var msToNoon = noon.getTime() - now.getTime();
+        console.log('msToNoon', msToNoon)
+    
+        setTimeout(function() {
+            console.log('runn')
+            makeNumOfCommits()
+            // reset();              //      <-- This is the function being called at midnight.
+            runEveryDay();    //      Then, reset again next midnight.
+        }, 4000000);
+}
+
+runEveryDay()
+
+const makeNumOfCommits = (user) => {
+    return new Promise(async (resolve, reject) => {
+        console.log('makeNumOfCommits')
+        try {
+            const stopIfFails = true
+            const folderLocation = path.join(__dirname + '/randomCommits.txt')
+            
+            await git('git status', stopIfFails).catch(err => { 
+                console.log(err)
+                throw 'failed to aquire status'})
+            const fileExists = await doesPathExist(folderLocation)
+            if(!fileExists){
+                await createFile(folderLocation).catch(err => { 
+                    console.log(err)
+                    throw 'failed to make folder'})
+            }
+            
+            let n = user.frequency
+            
+            while(n !== 0){
+                await appendFile(`timestamps.txt`).catch(err => { 
+                    console.log(err)
+                    throw ' failed to write file'})
+                await git('git add .').catch(err => { 
+                    console.log(err)
+                    throw ' failed to add files'})
+                await git(`git commit -m"hello, git." --author"${user.first} ${user.second} <${user.email}>`).catch(err => { 
+                    console.log(err)
+                    throw ' failed to commit'})
+                n--    
+            }
+
+            await git('git push origin HEAD')
+            console.log('pushed')
+            resolve('good')
+        } catch (err) {
+            reject(err)
+        }
+
+    })
+}
+
 router.get('/git/:numOfCommits', async (req, res, next) => {
     try {
-        const stopIfFails = true
-        const folderLocation = path.join(__dirname + '/randomCommits.txt')
-
-        await git('git status', stopIfFails).catch(err => { throw 'failed to aquire status'})
-        const fileExists = await doesPathExist(folderLocation)
-        if(!fileExists){
-            await createFile(folderLocation).catch(err => { throw 'failed to make folder'})
-        }
-        
-        let n = req.params.numOfCommits
-
-        while(n !== 0){
-            await appendFile(`timestamps.txt`).catch(err => { throw ' failed to write file'})
-            await git('git add .').catch(err => { throw ' failed to add files'})
-            await git('git commit -m"hello, git."').catch(err => { throw ' failed to commit'})
-            n--    
-        }
-
-        await git('git push origin HEAD')
+        console.log('get numOfCommits')
+        await makeNumOfCommits({first: 'Michael', last: 'Kerbleski', frequency: req.params.numOfCommits, email:'mkerbles@gmail.com'})
         res.status(200).send(`commits made`)
+    } catch (err) {
+        console.log('endpoint catch', err)
+        res.status(500).json(err)
+    }
+})
+
+router.post('/user', async (req, res, next) => {
+    console.log('post user')
+    try {
+        addUser(req.body).then(user => {
+            res.status(201).json(user)
+        }).catch(err => {
+            throw err
+        })
+    } catch (err) {
+        console.log('endpoint catch', err)
+        res.status(500).json(err)
+    }
+})
+
+router.put('/user', async (req, res, next) => {
+    console.log('put user')
+    try {
+
+        res.status(200).send(`user updated`)
     } catch (err) {
         console.log('endpoint catch', err)
         res.status(500).json(err)
