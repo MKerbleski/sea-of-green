@@ -99,11 +99,11 @@ const runEveryDay = async () => {
                     totalCommits += user.frequency
                     await makeNumOfCommits(user)
                 })
-                // reset();              //      <-- This is the function being called at midnight.
-                runEveryDay();    //      Then, reset again next midnight.
                 const endTime = Date.now()
                 const totalTime = endTime - startTime
                 console.log(`completed ${totalCommits} commits for ${usersToCommit.length} users in `, totalTime, 'ms' )
+                // reset();              //      <-- This is the function being called at midnight.
+                runEveryDay();    //      Then, reset again next midnight.
             }, 10000);
         })
     }
