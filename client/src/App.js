@@ -54,7 +54,7 @@ export default function App (){
 			localStorage.setItem('user', res.data)
 		}).catch(err => {
 			console.log('err', err)
-		})
+		})  //s
 	}
 
 console.log(email, frequency, first, last)
