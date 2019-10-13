@@ -84,7 +84,7 @@ const runEveryDay = async () => {
                 //         res()
                 //     }, 3000)
                 // })
-                usersToCommit.forEach(async user => {
+                await usersToCommit.forEach(async user => {
                     totalCommits += user.frequency
                     await makeNumOfCommits(user)
                 })
