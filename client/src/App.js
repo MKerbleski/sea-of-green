@@ -48,7 +48,7 @@ export default function App (){
 	}
 
 	const commitNow = () => {
-		axios.get('/api/git/1/1').then(res => {
+		axios.get('/api/git/1/19').then(res => {
 			console.log('res', res)
 			alert('done')
 			localStorage.setItem('user', res.data)
