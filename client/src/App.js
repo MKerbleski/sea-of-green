@@ -67,6 +67,7 @@ export default function App (){
 	return (	
 		<AppDiv>
 			This application will make as many commits as you want
+			<label>Step 1: Enter your name, email, and how many commits to make per day.</label>
 			<label>Github First Name</label>
 			<input type="text" name="first" onChange={(e) => handleChange(e)} value={first}></input>
 			<label>Github Last Name</label>
@@ -78,6 +79,7 @@ export default function App (){
 			<label>every day</label>
 			<button onClick={() => handleSubmit(first, last, email, frequency)}>Schedule</button>
 			<button onClick={commitNow}>Do One Now</button>
+			<label>Step 2: Star this Repository</label>
 			<iframe src="https://ghbtns.com/github-btn.html?user=mkerbleski&repo=sea-of-green&type=star&count=true&size=large" frameborder="0" scrolling="0" width="320px" height="60px"></iframe>
 		</AppDiv>
 	);
