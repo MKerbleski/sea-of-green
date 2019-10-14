@@ -4,7 +4,12 @@ import axios from 'axios'
 
 export default function App (){
 	const [ update, setUpdate ] = useState(false)
-	const [state, setState] = useState({ email: '', frequency: '', first: '', last: '' })
+	const [state, setState] = useState({ 
+		email: '', 
+		frequency: '', 
+		first: '', 
+		last: '' 
+	})
 
 	const handleChange = e =>
 		setState({
@@ -57,7 +62,7 @@ export default function App (){
 		})  //s
 	}
 
-console.log(email, frequency, first, last)
+	console.log(email, frequency, first, last)
 	
 	return (	
 		<AppDiv>
@@ -73,6 +78,7 @@ console.log(email, frequency, first, last)
 			<label>every day</label>
 			<button onClick={() => handleSubmit(first, last, email, frequency)}>Schedule</button>
 			<button onClick={commitNow}>Do One Now</button>
+			<iframe src="https://ghbtns.com/github-btn.html?user=mkerbleski&repo=sea-of-green&type=star&count=true&size=large" frameborder="0" scrolling="0" width="320px" height="60px"></iframe>
 		</AppDiv>
 	);
 }
