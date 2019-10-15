@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components'
 import axios from 'axios'
 import './App.css'
@@ -17,7 +17,7 @@ export default function App (){
 	const { email, frequency, first, last, bomb } = state
 
 	const handleChange = e => {
-		if(e.target.name == 'bomb' && e.target.value > 100){
+		if(e.target.name === 'bomb' && e.target.value > 100){
 			alert('dude... chill. Maybe try something reasonable, like 42.')
 			setState({
 			...state,
@@ -42,20 +42,18 @@ export default function App (){
 	}
 
 	const handleNewUser = (user) => {
-			const { email, frequency, first, last } = state
-			const postObj = {email, frequency, first, last}
-			console.log('post', postObj)
-			axios.post('/api/user', postObj).then(res => {
-				console.log('res', res)
-				localStorage.setItem('user', {email, frequency, first, last})
-			}).catch(err => {
-				console.log('err', err)
-			})
+		const { email, frequency, first, last } = state
+		const postObj = {email, frequency, first, last}
+		axios.post('/api/user', postObj).then(res => {
+			console.log('res', res)
+			localStorage.setItem('user', {email, frequency, first, last})
+		}).catch(err => {
+			console.log('err', err)
+		})
 	}
 
 	const commitNow = () => {
 		axios.get(`/api/git/${bomb}/${email}`).then(res => {
-			console.log('res', res)
 			alert('done')
 			localStorage.setItem('user', res.data)
 		}).catch(err => {
@@ -63,20 +61,8 @@ export default function App (){
 		})
 	}
 
-	const loadUser = () => {
-
-		axios.get('/api/git/1/19').then(res => {
-			console.log('res', res)
-			alert('done')
-			localStorage.setItem('user', res.data)
-		}).catch(err => {
-			console.log('err', err)
-		})  //s
-	}
-
 	const sendEmail = () => {
 		axios.get(`/api/${state.email}`).then(res => {
-			console.log('res', res)
 			if(res.status === 200){
 				setReturningUser(true)
 				const { first, last, frequency, email } = res.data[0]
@@ -102,8 +88,7 @@ export default function App (){
 		setLoggedin(false)
 	}
 
-	console.log(email, frequency, first, last)
-	
+
 	return (	
 		<AppDiv>
 			<h1>SEA of Green</h1>
@@ -150,7 +135,7 @@ export default function App (){
 					<button onClick={() => handleNewUser(first, last, email, frequency)}>Schedule</button>
 					<br></br>
 					<label>Step 2: Star this Repository</label>
-					<iframe src="https://ghbtns.com/github-btn.html?user=mkerbleski&repo=sea-of-green&type=star&count=true&size=large" frameborder="0" scrolling="0" width="320px" height="60px"></iframe>
+					<iframe src="https://ghbtns.com/github-btn.html?user=mkerbleski&repo=sea-of-green&type=star&count=true&size=large" frameborder="0" title="star" scrolling="0" width="320px" height="60px"></iframe>
 				</div>}
 			</div> : null }
 			
