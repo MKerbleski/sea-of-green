@@ -25,15 +25,15 @@ function getUsers(){
     })
 }
 
-function getUser(id){
+function getUser(email){
     return new Promise((res, rej) => {
         res(db('users')
-            .where('id', '=', id))
+            .where('email', '=', email))
     })
 }
 
 function updateUser(user){
     return db('users')
         .where('email', '=', user.email)
-        .update(update)
+        .update(user)
 }

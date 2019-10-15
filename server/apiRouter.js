@@ -46,7 +46,7 @@ const appendFile = (path, content=null) => {
         content = Date.now()
     }
     return new Promise((resolve, reject) => {
-        fs.appendFile(path, `change made at: ${content}\n`, (err) => {
+        fs.appendFile(path, `M`, (err) => {
             if(err){
                 console.log('Failed to write file', err)
                 reject(err)
@@ -97,7 +97,7 @@ const runEveryDay = async () => {
 
 runEveryDay()
 
-const makeNumOfCommits = (user) => {
+const makeNumOfCommits = (user, num=null) => {
     return new Promise(async (resolve, reject) => {
         console.log('start Git Process', user)
         try {
@@ -113,8 +113,10 @@ const makeNumOfCommits = (user) => {
                     console.log(err)
                     throw 'failed to make folder'})
             }
-            
             let n = user.frequency
+            if(num){
+                n = num
+            }
             if(user.frequency==0){
                 n=1
             }
@@ -142,9 +144,9 @@ const makeNumOfCommits = (user) => {
     })
 }
 
-router.get('/git/:numOfCommits/:userId', async (req, res, next) => {
+router.get('/git/:numOfCommits/:email', async (req, res, next) => {
     try {
-        const user = await getUser(req.params.userId).catch(err => {
+        const user = await getUser(req.params.email).catch(err => {
             console.log('err', err)
             throw err
         })
@@ -172,10 +174,29 @@ router.post('/user', async (req, res, next) => {
 })
 
 router.put('/user', async (req, res, next) => {
-    console.log('put user')
+    console.log('put user WIP')
     try {
-
+        const updatedUser = await updateUser(req.body).catch(err => {
+            console.log('err', err)
+            throw err
+        })
+        console.log(updatedUser)
         res.status(200).send(`user updated`)
+    } catch (err) {
+        console.log('endpoint catch', err)
+        res.status(500).json(err)
+    }
+})
+
+router.get('/:email', async (req, res, next) => {
+    try {
+        const user = await getUser(req.params.email)
+        console.log('user', user)
+        if(user[0]){
+            res.send(user) 
+        } else {
+            res.status(204).json(null)
+        }
     } catch (err) {
         console.log('endpoint catch', err)
         res.status(500).json(err)
