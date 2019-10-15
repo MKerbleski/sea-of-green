@@ -120,6 +120,7 @@ const makeNumOfCommits = (user, num=null) => {
             if(user.frequency==0){
                 n=1
             }
+            console.log('n', n)
             while(n > 0){
                 await appendFile(`timestamps.txt`).catch(err => { 
                     console.log(err)
@@ -151,7 +152,10 @@ router.get('/git/:numOfCommits/:email', async (req, res, next) => {
             throw err
         })
         console.log('get numOfCommits', user[0])
-        await makeNumOfCommits(user[0])
+        await makeNumOfCommits(user[0], req.params.numOfCommits).catch(err => {
+            console.log('err', err)
+            throw err
+        })
         res.status(200).send(`commits made`)
     } catch (err) {
         console.log('endpoint catch', err)
