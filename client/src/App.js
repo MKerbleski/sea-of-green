@@ -99,22 +99,25 @@ export default function App (){
 			last: '',
 			bomb: 1
 		})
+		setLoggedin(false)
 	}
 
 	console.log(email, frequency, first, last)
 	
 	return (	
 		<AppDiv>
-			This application will make as many commits as you want
+			<h1>SEA of Green</h1>
+			This application allows you to make as many commits as you want every day. Or at one time. 
+			<br></br>
 			<br></br>
 			<label>Enter your email address that you use to login to github.</label>
+			<br></br>
 			<label>Github Email Address</label>
 			<input type="email" name="email" onChange={(e) => handleChange(e)} value={email}></input>
 			<button onClick={sendEmail}>Submit</button>
 			{loggedin ? <button onClick={(e) => {logout()}}>Clear</button> : null}
 			{loggedin ? <div className="lower">
 				{returningUser ? <div className="update two">
-				UPDATE
 					Welcome back! Modify your schedule
 					<label>Github First Name</label>
 					<input type="text" name="first" onChange={(e) => handleChange(e)} value={first}></input>
@@ -126,7 +129,7 @@ export default function App (){
 					<button onClick={() => handleUpdate(first, last, email, frequency)}>UPDATE</button>
 					<br></br>
 					<br></br>
-				 	OR
+				 	OR just make a few extra right now
 					<br></br>
 					<input type="number" name="bomb" onChange={(e) => handleChange(e)} value={bomb}></input>
 					<button onClick={commitNow}>{`Make ${bomb} commits now`}</button>
