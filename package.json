@@ -12,6 +12,7 @@
 		"jsonwebtoken": "^8.5.1",
 		"knex": "^0.19.5",
 		"lodash": "^4.17.15",
+		"pg": "^7.12.1",
 		"timestamp": "0.0.1"
 	},
 	"scripts": {
