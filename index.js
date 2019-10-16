@@ -10,6 +10,9 @@ server.use(express.json());
 server.use(express.static(path.join(__dirname, 'client/build')));
 
 server.use('/api', apiRouter);
+server.get('/test', (req, res) => {
+	res.send('working')
+})
 
 server.get('*', (req, res) => {
 	res.sendFile(path.join(__dirname + '/client/build/index.html'));

@@ -1,5 +1,5 @@
 {
-    "name": "brightfield-challenge",
+    "name": "sea-of-green",
     "version": "0.1.0",
     "private": true,
     "dependencies": {
@@ -37,5 +37,5 @@
         "not ie <= 11",
         "not op_mini all"
     ],
-    "proxy": "http://localhost:8080"
+    "proxy": "https://sea-of-green.herokuapp.com/"
 }
