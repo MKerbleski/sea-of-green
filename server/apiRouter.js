@@ -109,7 +109,7 @@ const makeNumOfCommits = (user, num=null) => {
                 fs.mkdirSync(folderLocation)
             }
 
-            await git('git clone https://github.com/MKerbleski/green-squares.git', stopIfFails).catch(err => { 
+            await git('cd server/square && git clone https://github.com/MKerbleski/green-squares.git', stopIfFails).catch(err => { 
                 console.log(err)
                 throw 'failed to aquire status'})
 
