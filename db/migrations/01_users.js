@@ -4,7 +4,7 @@ exports.up = function(knex, Promise) {
         tbl.increments()
         tbl.string('first')
         tbl.string('last')
-        tbl.int('frequency')
+        tbl.integer('frequency')
         tbl.string('email')
         tbl.timestamp('created_at').defaultTo(knex.fn.now())
         tbl.timestamp('updated_at').defaultTo(knex.fn.now())
