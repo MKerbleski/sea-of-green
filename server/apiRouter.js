@@ -102,23 +102,20 @@ const makeNumOfCommits = (user, num=null) => {
         console.log('start Git Process', user)
         try {
             const stopIfFails = true
-            const folderLocation = path.join(__dirname + '/randomCommits.txt')
-            
-            await git('git clone https://github.com/MKerbleski/sea-of-green.git', stopIfFails).catch(err => { 
-                console.log(err)
-                throw 'failed to aquire status'})
-            await git('git status', stopIfFails).catch(err => { 
-                console.log(err)
-                throw 'failed to aquire status'})
-            await git('git status', stopIfFails).catch(err => { 
-                console.log(err)
-                throw 'failed to aquire status'})
+            const folderLocation = path.join(__dirname + '/square')
             const fileExists = await doesPathExist(folderLocation)
+            
             if(!fileExists){
-                await createFile(folderLocation).catch(err => { 
-                    console.log(err)
-                    throw 'failed to make folder'})
+                fs.mkdirSync(folderLocation)
             }
+
+            await git('git clone https://github.com/MKerbleski/green-squares.git', stopIfFails).catch(err => { 
+                console.log(err)
+                throw 'failed to aquire status'})
+
+            await git('git status', stopIfFails).catch(err => { 
+                console.log(err)
+                throw 'failed to aquire status'})
             let n = user.frequency
             if(num){
                 n = num
