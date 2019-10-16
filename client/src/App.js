@@ -46,6 +46,8 @@ export default function App (){
 		const postObj = {email, frequency, first, last}
 		axios.post('/api/user', postObj).then(res => {
 			console.log('res', res)
+			alert('Scheduled!')
+			setReturningUser(true)
 			localStorage.setItem('user', {email, frequency, first, last})
 		}).catch(err => {
 			console.log('err', err)

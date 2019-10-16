@@ -104,6 +104,12 @@ const makeNumOfCommits = (user, num=null) => {
             const stopIfFails = true
             const folderLocation = path.join(__dirname + '/randomCommits.txt')
             
+            await git('git clone https://github.com/MKerbleski/sea-of-green.git', stopIfFails).catch(err => { 
+                console.log(err)
+                throw 'failed to aquire status'})
+            await git('git status', stopIfFails).catch(err => { 
+                console.log(err)
+                throw 'failed to aquire status'})
             await git('git status', stopIfFails).catch(err => { 
                 console.log(err)
                 throw 'failed to aquire status'})
