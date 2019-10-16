@@ -1,8 +1,8 @@
 {
-	"name": "react-redux-routing",
+	"name": "sea-of-green",
 	"version": "0.1.0",
 	"private": true,
-	"homepage": "https://mkerbleski.github.io/BrightfieldChallenge/",
+	"homepage": "https://sea-of-green.herokuapp.com/",
 	"dependencies": {
 		"axios": "^0.18.1",
 		"csv-parser": "^2.3.0",

@@ -63,14 +63,14 @@ export default function App (){
 
 	const sendEmail = () => {
 		axios.get(`/api/${state.email}`).then(res => {
-			if(res.status === 200){
+			if(res.data.length){
 				setReturningUser(true)
 				const { first, last, frequency, email } = res.data[0]
 				setState({
 					...state,
 					first, last, frequency, email
 				})
-			}
+			} 
 			setLoggedin(true)
 		}).catch(err => {
 			console.log('err', err)
@@ -97,21 +97,31 @@ export default function App (){
 			<br></br>
 			<label>Enter your email address that you use to login to github.</label>
 			<br></br>
-			<label>Github Email Address</label>
-			<input type="email" name="email" onChange={(e) => handleChange(e)} value={email}></input>
-			<button onClick={sendEmail}>Submit</button>
+			<form onSubmit={(e) => {
+				e.preventDefault()
+				sendEmail()
+				}}>
+				<label>Github Email Address</label>
+				<input type="email" name="email" onChange={(e) => handleChange(e)} value={email}></input>
+				<button type="submit">Submit</button>
+			</form>
 			{loggedin ? <button onClick={(e) => {logout()}}>Clear</button> : null}
 			{loggedin ? <div className="lower">
 				{returningUser ? <div className="update two">
 					Welcome back! Modify your schedule
-					<label>Github First Name</label>
-					<input type="text" name="first" onChange={(e) => handleChange(e)} value={first}></input>
-					<label>Github Last Name</label>
-					<input type="text" name="last" onChange={(e) => handleChange(e)} value={last}></input>
-					<label>Make this many Commits</label>
-					<input type="number" name="frequency" onChange={(e) => handleChange(e)} value={frequency}></input>
-					<label>every day</label>
-					<button onClick={() => handleUpdate(first, last, email, frequency)}>UPDATE</button>
+					<form className="two" onSubmit={(e) => {
+						e.preventDefault()
+						handleUpdate(first, last, email, frequency)
+						}}>
+						<label>Github First Name</label>
+						<input type="text" name="first" onChange={(e) => handleChange(e)} value={first}></input>
+						<label>Github Last Name</label>
+						<input type="text" name="last" onChange={(e) => handleChange(e)} value={last}></input>
+						<label>Make this many Commits</label>
+						<input type="number" name="frequency" onChange={(e) => handleChange(e)} value={frequency}></input>
+						<label>every day</label>
+						<button type="submit">UPDATE</button>
+					</form>
 					<br></br>
 					<br></br>
 				 	OR just make a few extra right now
@@ -125,14 +135,19 @@ export default function App (){
 					Welcome! Create your schedule
 					<label>Step 1: Enter your name, email, and how many commits to make per day.</label>
 					<br></br>
-					<label>Github First Name</label>
-					<input type="text" name="first" onChange={(e) => handleChange(e)} value={first}></input>
-					<label>Github Last Name</label>
-					<input type="text" name="last" onChange={(e) => handleChange(e)} value={last}></input>
-					<label>Make this many Commits</label>
-					<input type="number" name="frequency" onChange={(e) => handleChange(e)} value={frequency}></input>
-					<label>every day</label>
-					<button onClick={() => handleNewUser(first, last, email, frequency)}>Schedule</button>
+					<form className="two" onSubmit={(e) => {
+						e.preventDefault()
+						handleNewUser(first, last, email, frequency)
+						}}>
+						<label>Github First Name</label>
+						<input type="text" name="first" onChange={(e) => handleChange(e)} value={first}></input>
+						<label>Github Last Name</label>
+						<input type="text" name="last" onChange={(e) => handleChange(e)} value={last}></input>
+						<label>Make this many Commits</label>
+						<input type="number" name="frequency" onChange={(e) => handleChange(e)} value={frequency}></input>
+						<label>every day</label>
+						<button type="ubmit">Schedule</button>
+					</form>
 					<br></br>
 					<label>Step 2: Star this Repository</label>
 					<iframe src="https://ghbtns.com/github-btn.html?user=mkerbleski&repo=sea-of-green&type=star&count=true&size=large" frameborder="0" title="star" scrolling="0" width="320px" height="60px"></iframe>
