@@ -109,37 +109,38 @@ const makeNumOfCommits = (user, num=null) => {
                 fs.mkdirSync(folderLocation)
             }
 
-            await git('cd server/square && git clone https://github.com/MKerbleski/green-squares.git', stopIfFails).catch(err => { 
+            const start = await git('cd green-squares && ls && git pull https://github.com/MKerbleski/green-squares.git', stopIfFails).catch(err => { 
                 console.log(err)
                 throw 'failed to aquire status'})
+
 
             await git('git status', stopIfFails).catch(err => { 
                 console.log(err)
                 throw 'failed to aquire status'})
-            let n = user.frequency
-            if(num){
-                n = num
-            }
-            if(user.frequency==0){
-                n=1
-            }
-            console.log('n', n)
-            while(n > 0){
-                await appendFile(`timestamps.txt`).catch(err => { 
-                    console.log(err)
-                    throw ' failed to write file'})
-                await git('git add .').catch(err => { 
-                    console.log(err)
-                    throw ' failed to add files'})
-                console.log(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`)
-                await git(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`).catch(err => { 
-                    console.log(err)
-                    throw ' failed to commit'})
-                n--    
-            }
+            // let n = user.frequency
+            // if(num){
+            //     n = num
+            // }
+            // if(user.frequency==0){
+            //     n=1
+            // }
+            // console.log('n', n)
+            // while(n > 0){
+            //     await appendFile(`squares.txt`).catch(err => { 
+            //         console.log(err)
+            //         throw ' failed to write file'})
+            //     await git('git add .').catch(err => { 
+            //         console.log(err)
+            //         throw ' failed to add files'})
+            //     console.log(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`)
+            //     await git(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`).catch(err => { 
+            //         console.log(err)
+            //         throw ' failed to commit'})
+            //     n--    
+            // }
 
-            await git('git push origin HEAD')
-            console.log('pushed')
+            // await git('git push origin HEAD')
+            // console.log('pushed')
             resolve('good')
         } catch (err) {
             reject(err)
