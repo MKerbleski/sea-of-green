@@ -3,7 +3,14 @@
     flex-direction: column;
     margin: 50px;
 }
+
 .lower {
     display: flex;
     flex-direction: row;
+}
+
+.square {
+    width: 5px;
+    height: 5px;
+    color: green;
 }
