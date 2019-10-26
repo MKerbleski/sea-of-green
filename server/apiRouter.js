@@ -102,19 +102,23 @@ const makeNumOfCommits = (user, num=null) => {
         console.log('start Git Process', user)
         try {
             const stopIfFails = true
-            const folderLocation = path.join(__dirname + '/square')
-            const fileExists = await doesPathExist(folderLocation)
+            // const folderLocation = path.join(__dirname + '/square')
+            // const fileExists = await doesPathExist(folderLocation)
             
-            if(!fileExists){
-                fs.mkdirSync(folderLocation)
-            }
+            // if(!fileExists){
+            //     fs.mkdirSync(folderLocation)
+            //     // git clone 
+            // } else {
+            //     // git pull 
+            // }
 
-            const start = await git('cd green-squares && ls && git pull https://github.com/MKerbleski/green-squares.git', stopIfFails).catch(err => { 
+            // const start = await git('ls', stopIfFails).catch(err => { 
+            const start = await git('git clone https://github.com/MKerbleski/green-squares.git tempRepo', stopIfFails).catch(err => { 
                 console.log(err)
                 throw 'failed to aquire status'})
+console.log('start', start)
 
-
-            await git('git status', stopIfFails).catch(err => { 
+            await git('cd tempRepo  && git status', stopIfFails).catch(err => { 
                 console.log(err)
                 throw 'failed to aquire status'})
             // let n = user.frequency
