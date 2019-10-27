@@ -157,14 +157,14 @@ console.log('start', start)
             }
             console.log('n', n)
             while(n > 0){
-                await appendFile(`tempRepo/squares.txt`).catch(err => { 
+                await appendFile(`tempRepo/square.txt`).catch(err => { 
                     console.log(err)
                     throw ' failed to write file'})
-                await git('git add .').catch(err => { 
+                await git('cd ./tempRepo && git add .').catch(err => { 
                     console.log(err)
                     throw ' failed to add files'})
-                console.log(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`)
-                await git(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`).catch(err => { 
+                console.log(`cd ./tempRepo && git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`)
+                await git(`cd ./tempRepo && git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`).catch(err => { 
                     console.log(err)
                     throw ' failed to commit'})
                 n--    
@@ -173,7 +173,7 @@ console.log('start', start)
             await git('git push origin HEAD')
             console.log('pushed')
 
-            // await deleteContents('./tempRepo')
+            await deleteContents('./tempRepo')
            
             resolve('good')
         } catch (err) {
