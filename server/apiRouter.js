@@ -9,6 +9,7 @@ const { addUser, updateUser, getUsers, getUser } = require('../db/functions/user
 const git = (command, canReject=false) => {
     return new Promise((resolve, reject) => {
         exec(command, (err, stdout, stderr) => {
+            console.log(err, stderr)
             if(err && canReject){
                 reject({err: true, msg: err})
             } else if( err){
