@@ -3,6 +3,7 @@ const router = express.Router();
 const { exec } = require('child_process')
 const fs = require('fs')
 const path = require('path')
+require('dotenv').config();
 const { addUser, updateUser, getUsers, getUser } = require('../db/functions/users')
 
 const git = (command, canReject=false) => {
@@ -133,7 +134,7 @@ const makeNumOfCommits = (user, num=null) => {
 
 
             // const start = await git('ls', stopIfFails).catch(err => { 
-            const start = await git('git clone https://github.com/MKerbleski/green-squares.git tempRepo', stopIfFails).catch(err => { 
+            const start = await git(`git clone https://${process.env.GITHUB_NAME}:${process.env.GITHUB_TOKEN}@github.com/MKerbleski/green-squares.git tempRepo`, stopIfFails).catch(err => { 
                 console.log(err)
                 throw 'failed to aquire status'})
 console.log('start', start)
@@ -171,7 +172,7 @@ console.log('start', start)
                 n--    
             }
 
-           const pushed =  await git('cd ./tempRepo && git push')
+           const pushed =  await git('cd ./tempRepo && git push ')
             console.log('pushed', pushed)
 
             await deleteContents('./tempRepo')
