@@ -1,9 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const { exec } = require('child_process')
 const fs = require('fs')
 const path = require('path')
-require('dotenv').config();
 const { addUser, updateUser, getUsers, getUser } = require('../db/functions/users')
 
 const git = (command, canReject=false) => {
