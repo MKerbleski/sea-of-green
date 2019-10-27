@@ -171,7 +171,7 @@ console.log('start', start)
                 n--    
             }
 
-           const pushed =  await git('cd ./tempRepo && git push origin HEAD')
+           const pushed =  await git('cd ./tempRepo && git push')
             console.log('pushed', pushed)
 
             await deleteContents('./tempRepo')
