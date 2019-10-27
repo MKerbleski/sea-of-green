@@ -57,6 +57,23 @@ const appendFile = (path, content=null) => {
     })
 }
 
+const deleteContents = (path) => {
+    return new Promise(async (resolve, reject) => {
+        if (fs.existsSync(path)) {
+            fs.readdirSync(path).forEach((file, index) => {
+              const curPath = path + '/' + file ;
+              if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                deleteContents(curPath);
+              } else { // delete file
+                fs.unlinkSync(curPath);
+              }
+            });
+            fs.rmdirSync(path);
+          }
+          resolve()
+    })
+}
+
 const runEveryDay = async () => {
 
     console.log('Begin Batch Commits')
@@ -102,7 +119,7 @@ const makeNumOfCommits = (user, num=null) => {
         console.log('start Git Process', user)
         try {
             const stopIfFails = true
-            // const folderLocation = path.join(__dirname + '/square')
+            // const folderLocation = path.join(__dirname + '/tempRepo')
             // const fileExists = await doesPathExist(folderLocation)
             
             // if(!fileExists){
@@ -112,39 +129,52 @@ const makeNumOfCommits = (user, num=null) => {
             //     // git pull 
             // }
 
+
+
             // const start = await git('ls', stopIfFails).catch(err => { 
             const start = await git('git clone https://github.com/MKerbleski/green-squares.git tempRepo', stopIfFails).catch(err => { 
                 console.log(err)
                 throw 'failed to aquire status'})
 console.log('start', start)
 
-            await git('cd tempRepo  && git status', stopIfFails).catch(err => { 
+            const status = await git('cd tempRepo  && git status', stopIfFails).catch(err => { 
                 console.log(err)
                 throw 'failed to aquire status'})
-            // let n = user.frequency
-            // if(num){
-            //     n = num
-            // }
-            // if(user.frequency==0){
-            //     n=1
-            // }
-            // console.log('n', n)
-            // while(n > 0){
-            //     await appendFile(`squares.txt`).catch(err => { 
-            //         console.log(err)
-            //         throw ' failed to write file'})
-            //     await git('git add .').catch(err => { 
-            //         console.log(err)
-            //         throw ' failed to add files'})
-            //     console.log(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`)
-            //     await git(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`).catch(err => { 
-            //         console.log(err)
-            //         throw ' failed to commit'})
-            //     n--    
-            // }
+                console.log('status', status)
 
-            // await git('git push origin HEAD')
-            // console.log('pushed')
+                
+                
+                // const ls = await git('cd ./tempRepo && ls')
+                // console.log('ls', ls)
+
+
+            let n = user.frequency
+            if(num){
+                n = num
+            }
+            if(user.frequency==0){
+                n=1
+            }
+            console.log('n', n)
+            while(n > 0){
+                await appendFile(`tempRepo/squares.txt`).catch(err => { 
+                    console.log(err)
+                    throw ' failed to write file'})
+                await git('git add .').catch(err => { 
+                    console.log(err)
+                    throw ' failed to add files'})
+                console.log(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`)
+                await git(`git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`).catch(err => { 
+                    console.log(err)
+                    throw ' failed to commit'})
+                n--    
+            }
+
+            await git('git push origin HEAD')
+            console.log('pushed')
+
+            // await deleteContents('./tempRepo')
+           
             resolve('good')
         } catch (err) {
             reject(err)
