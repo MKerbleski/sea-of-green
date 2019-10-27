@@ -13,6 +13,7 @@ const git = (command, canReject=false) => {
             } else if( err){
                 resolve({err: true, msg: err})
             } else {
+                console.log('stdout', stdout)
                 resolve({err: false, msg: stdout})
             }
         })
@@ -170,8 +171,8 @@ console.log('start', start)
                 n--    
             }
 
-            await git('cd ./tempRepo && git push origin HEAD')
-            console.log('pushed')
+           const pushed =  await git('cd ./tempRepo && git push origin HEAD')
+            console.log('pushed', pushed)
 
             await deleteContents('./tempRepo')
            
