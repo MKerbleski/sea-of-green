@@ -150,11 +150,12 @@ console.log('start', start)
                 // const ls = await git('cd ./tempRepo && ls')
                 // console.log('ls', ls)
 
-            await git(`git config user.email "${user.email}"`).catch(err => { 
+console.log(`git config --global user.email "${user.email}"`)
+            await git(`git config --global user.email "${user.email}"`).catch(err => { 
                 console.log(err)
                 throw ' failed to add files'})
-
-            await git(`git config user.name "${user.first} ${user.last}"`).catch(err => { 
+console.log(`git config --global user.name "${user.first} ${user.last}"`)
+            await git(`git config --global user.name "${user.first} ${user.last}"`).catch(err => { 
                 console.log(err)
                 throw ' failed to add files'})
 
