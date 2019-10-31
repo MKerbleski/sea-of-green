@@ -77,18 +77,19 @@ const deleteContents = (path) => {
     })
 }
 
-const runEveryDay = async () => {
+const runEveryDay = async (t) => {
 
     console.log('Begin Batch Commits')
     var now = new Date();
     var noon = new Date(
         now.getFullYear(),
         now.getMonth(),
-        now.getDate() + 1, // the next day, ...
-        12, 0, 0 // ...at 00:00:00 hours
+        now.getDate() + t, // the next day, ...
+        3, 41, 0 // ...at 03:41:00 hours
     );
 
     var msToNoon = noon.getTime() - now.getTime();
+console.log('minutes till it starts', msToNoon / 1000 / 60)
 
     async function asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
@@ -100,22 +101,22 @@ const runEveryDay = async () => {
         const startTime = Date.now()
         setTimeout(async function() {
             let totalCommits = 0
-            const usersToCommit = await getUsers().catch(err => {
+            const usersToCommit = await getUsers().catch(err => { 
                 console.log('err', err)
             })
             await asyncForEach(usersToCommit, async (user) => {
                 totalCommits += user.frequency
-                await makeNumOfCommits(user)
+                await makeNumOfCommits(user, user.frequency)
             })              //      <-- This is the function being called at midnight.
             const endTime = Date.now()
             const totalTime = endTime - startTime
             console.log(`completed ${totalCommits} commits for ${usersToCommit.length} users in `, totalTime, 'ms' )
-            runEveryDay();    //      Then, reset again next midnight.
+            runEveryDay(1);    //      Then, reset again next midnight.
         }, msToNoon);
     })
 }
 
-runEveryDay()
+runEveryDay(0)
 
 const makeNumOfCommits = (user, num=null) => {
     return new Promise(async (resolve, reject) => {
@@ -131,7 +132,7 @@ const makeNumOfCommits = (user, num=null) => {
             // } else {
             //     // git pull 
             // }
-
+            await deleteContents('./tempRepo')
 
 
             // const start = await git('ls', stopIfFails).catch(err => { 

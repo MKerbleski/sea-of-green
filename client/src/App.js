@@ -18,7 +18,7 @@ export default function App (){
 
 	const handleChange = e => {
 		if(e.target.name === 'bomb' && e.target.value > 100){
-			alert('dude... chill. Maybe try something reasonable, like 42.')
+			alert('FYI the higher the commits you do in a day the lighter the rest of your squares will become.')
 			setState({
 			...state,
 			[e.target.name]: 42
@@ -34,7 +34,7 @@ export default function App (){
 	const handleUpdate = (user) => {
 		axios.put('/api/user', {email, frequency, first, last}).then(res => {
 			console.log('res', res)
-			localStorage.setItem('user', res.data)
+			// localStorage.setItem('user', res.data)
 		}).catch(err => {
 			console.log('err', err)
 		})
