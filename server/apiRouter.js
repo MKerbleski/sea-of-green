@@ -85,11 +85,22 @@ const runEveryDay = async (t) => {
         now.getFullYear(),
         now.getMonth(),
         now.getDate() + t, // the next day, ...
-        3, 41, 0 // ...at 03:41:00 hours
+        16, 41, 0 // ...at 03:41:00 hours
     );
 
-    var msToNoon = noon.getTime() - now.getTime();
-console.log('minutes till it starts', msToNoon / 1000 / 60)
+    // console.log('noon.getTime()', noon.getTime())
+    // console.log('now.getTime()', now.getTime())
+    // console.log('msToNoon', msToNoon/1000/60)
+    var msToNoon = noon.getTime() - Date.now();
+
+    const displayCountdown = () => {
+        var nowmsToNoon = noon.getTime() - Date.now();
+        console.log('minutes till it starts', nowmsToNoon / 1000 / 60)
+        setTimeout(() => {
+            displayCountdown()
+        }, 1000*60*30) //every half hour
+    }
+    displayCountdown()
 
     async function asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
