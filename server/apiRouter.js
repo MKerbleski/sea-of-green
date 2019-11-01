@@ -85,7 +85,7 @@ const runEveryDay = async (t) => {
         now.getFullYear(),
         now.getMonth(),
         now.getDate() + t, // the next day, ...
-        16, 41, 0 // ...at 03:41:00 hours
+        03, 41, 0 // ...at 03:41:00 hours
     );
 
     // console.log('noon.getTime()', noon.getTime())
