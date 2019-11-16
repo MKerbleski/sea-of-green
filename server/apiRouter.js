@@ -114,8 +114,8 @@ const runEveryDay = async (t) => {
             
             setTimeout(() => {
                 displayCountdown()
+                console.log('minutes till it starts', nowmsToNoon / 1000 / 60)
             }, process.env.COUNTDOWN_UPDATE) //every half hour
-            console.log('minutes till it starts', nowmsToNoon / 1000 / 60)
         }
     }
     displayCountdown()
