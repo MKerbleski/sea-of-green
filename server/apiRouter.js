@@ -79,28 +79,48 @@ const deleteContents = (path) => {
 
 const runEveryDay = async (t) => {
 
-    console.log('Begin Batch Commits')
     var now = new Date();
-    var noon = new Date(
+    let noon = new Date(
         now.getFullYear(),
         now.getMonth(),
-        now.getDate() + t, // the next day, ...
-        03, 41, 0 // ...at 03:41:00 hours
+        now.getDate(), // the next day, ...
+        process.env.HOUR, 
+        process.env.MINUTE, 
     );
+    
+    console.log('Begin Batch Commits', noon)
 
+    if(noon<Date.now()){
+        console.log('next Noon')
+        noon = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()+1, // the next day, ...
+            process.env.HOUR, 
+            process.env.MINUTE, 
+        );
+    } 
+    
     // console.log('noon.getTime()', noon.getTime())
     // console.log('now.getTime()', now.getTime())
     // console.log('msToNoon', msToNoon/1000/60)
     var msToNoon = noon.getTime() - Date.now();
-
+    
     const displayCountdown = () => {
         var nowmsToNoon = noon.getTime() - Date.now();
-        console.log('minutes till it starts', nowmsToNoon / 1000 / 60)
-        setTimeout(() => {
-            displayCountdown()
-        }, 1000*60*30) //every half hour
+        if(nowmsToNoon < 0 ){
+            return 
+        } else {
+            
+            setTimeout(() => {
+                displayCountdown()
+            }, process.env.COUNTDOWN_UPDATE) //every half hour
+            console.log('minutes till it starts', nowmsToNoon / 1000 / 60)
+        }
     }
     displayCountdown()
+
+
 
     async function asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
@@ -108,9 +128,10 @@ const runEveryDay = async (t) => {
         }
     }
 
-    await new Promise((res,rej) => {
+    // return new Promise((res,rej) => {
+        // displayCountdown()
         const startTime = Date.now()
-        setTimeout(async function() {
+        return setTimeout(async function() {
             let totalCommits = 0
             const usersToCommit = await getUsers().catch(err => { 
                 console.log('err', err)
@@ -122,12 +143,13 @@ const runEveryDay = async (t) => {
             const endTime = Date.now()
             const totalTime = endTime - startTime
             console.log(`completed ${totalCommits} commits for ${usersToCommit.length} users in `, totalTime, 'ms' )
-            runEveryDay(1);    //      Then, reset again next midnight.
+            runEveryDay();    //      Then, reset again next midnight.
+            
         }, msToNoon);
-    })
+    // })
 }
 
-runEveryDay(0)
+runEveryDay(1)
 
 const makeNumOfCommits = (user, num=null) => {
     return new Promise(async (resolve, reject) => {
