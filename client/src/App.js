@@ -128,7 +128,7 @@ export default function App (){
 					</form>
 					<br></br>
 					<br></br>
-				 	OR just make a few extra right now
+				 	OR just make a few extra right now to a text file called <b>green squares</b>
 					<br></br>
 					<input type="number" name="bomb" onChange={(e) => handleChange(e)} value={bomb}></input>
 					<button onClick={commitNow}>{`Make ${bomb} commits now`}</button>
