@@ -3,28 +3,22 @@ const express = require('express');
 const router = express.Router();
 const { exec } = require('child_process')
 const fs = require('fs')
-const path = require('path')
 const { addUser, updateUser, getUsers, getUser } = require('../db/functions/users')
 
 const git = (command, canReject=false) => {
     return new Promise((resolve, reject) => {
         exec(command, (err, stdout, stderr) => {
-            console.log(err, stderr)
             if(err && canReject){
+                console.log(err, stderr)
                 reject({err: true, msg: err})
             } else if( err){
+                console.log(err, stderr)
                 resolve({err: true, msg: err})
             } else {
-                console.log('stdout', stdout)
+                // console.log('stdout', stdout)
                 resolve({err: false, msg: stdout})
             }
         })
-    })
-}
-
-const doesPathExist = (path) => {
-    return new Promise((resolve, reject) => {
-        resolve(fs.existsSync(path))
     })
 }
 
@@ -44,12 +38,12 @@ const createFile = (path, content=null) => {
     })
 }
 
-const appendFile = (path, content=null) => {
+const appendFile = (path, content) => {
     if(!content){
         content = Date.now()
     }
     return new Promise((resolve, reject) => {
-        fs.appendFile(path, `M`, (err) => {
+        fs.appendFile(path, content, (err) => {
             if(err){
                 console.log('Failed to write file', err)
                 reject(err)
@@ -77,122 +71,81 @@ const deleteContents = (path) => {
     })
 }
 
-const runEveryDay = async (t) => {
+const runEveryDay = async () => {
 
     var now = new Date();
-    let noon = new Date(
+    let beginAt = new Date(
         now.getFullYear(),
         now.getMonth(),
-        now.getDate(), // the next day, ...
+        now.getDate(),
         process.env.HOUR, 
         process.env.MINUTE, 
-    );
-    
-    console.log('Begin Batch Commits', noon)
-
-    if(noon<Date.now()){
-        console.log('next Noon')
-        noon = new Date(
+        );
+        
+    if(beginAt < Date.now()){ // if that time has already passed today (the day the processs starts)
+        beginAt = new Date(
             now.getFullYear(),
             now.getMonth(),
-            now.getDate()+1, // the next day, ...
+            now.getDate() + 1, // sets the timer for tomorrow
             process.env.HOUR, 
             process.env.MINUTE, 
         );
-    } 
-    
-    // console.log('noon.getTime()', noon.getTime())
-    // console.log('now.getTime()', now.getTime())
-    // console.log('msToNoon', msToNoon/1000/60)
-    var msToNoon = noon.getTime() - Date.now();
+        console.log('batch commits will happen tomorrow', beginAt)        
+    } else {
+        console.log('batch commits will happen today', beginAt)
+    }
+
+    var msTillStartTime = beginAt.getTime() - Date.now();
     
     const displayCountdown = () => {
-        var nowmsToNoon = noon.getTime() - Date.now();
-        if(nowmsToNoon < 0 ){
+        var timeRemaining = beginAt.getTime() - Date.now();
+        if(timeRemaining < 0){
             return 
         } else {
-            
             setTimeout(() => {
                 displayCountdown()
-                console.log('minutes till it starts', nowmsToNoon / 1000 / 60)
-            }, process.env.COUNTDOWN_UPDATE) //every half hour
+                console.log('minutes till batch commiting begins', timeRemaining / 1000 / 60)
+            }, process.env.COUNTDOWN_UPDATE)
         }
     }
     displayCountdown()
 
-
-
-    async function asyncForEach(array, callback) {
+    const asyncForEach = async (array, callback) => {
         for (let index = 0; index < array.length; index++) {
             await callback(array[index], index, array);
         }
     }
 
-    // return new Promise((res,rej) => {
-        // displayCountdown()
+    const runBatchCommitsForAll = async () => {
+        let totalCommits = 0
         const startTime = Date.now()
-        return setTimeout(async function() {
-            let totalCommits = 0
-            const usersToCommit = await getUsers().catch(err => { 
-                console.log('err', err)
-            })
-            await asyncForEach(usersToCommit, async (user) => {
-                totalCommits += user.frequency
-                await makeNumOfCommits(user, user.frequency)
-            })              //      <-- This is the function being called at midnight.
-            const endTime = Date.now()
-            const totalTime = endTime - startTime
-            console.log(`completed ${totalCommits} commits for ${usersToCommit.length} users in `, totalTime, 'ms' )
-            runEveryDay();    //      Then, reset again next midnight.
-            
-        }, msToNoon);
-    // })
+
+        const countAndMakeCommits = async (user) => {
+            totalCommits += user.frequency
+            await makeNumOfCommits(user, user.frequency)
+        }
+
+        const usersToCommit = await getUsers().catch(err => { 
+            console.log('err', err)
+        })
+
+        await asyncForEach(usersToCommit, countAndMakeCommits)
+
+        const endTime = Date.now()
+        const totalTime = endTime - startTime
+        
+        console.log(`completed ${totalCommits} commits for ${usersToCommit.length} users in `, totalTime, 'ms' )
+        runEveryDay(); // recursivly call this function once process is complete
+    }
+
+    return setTimeout(runBatchCommitsForAll, msTillStartTime);
 }
 
-runEveryDay(1)
+runEveryDay()
 
 const makeNumOfCommits = (user, num=null) => {
     return new Promise(async (resolve, reject) => {
-        console.log('start Git Process', user)
         try {
-            const stopIfFails = true
-            // const folderLocation = path.join(__dirname + '/tempRepo')
-            // const fileExists = await doesPathExist(folderLocation)
-            
-            // if(!fileExists){
-            //     fs.mkdirSync(folderLocation)
-            //     // git clone 
-            // } else {
-            //     // git pull 
-            // }
-            await deleteContents('./tempRepo')
-
-
-            // const start = await git('ls', stopIfFails).catch(err => { 
-            const start = await git(`git clone https://${process.env.GITHUB_NAME}:${process.env.GITHUB_TOKEN}@github.com/MKerbleski/green-squares.git tempRepo`, stopIfFails).catch(err => { 
-                console.log(err)
-                throw 'failed to aquire status'})
-console.log('start', start)
-
-            const status = await git('cd tempRepo  && git status', stopIfFails).catch(err => { 
-                console.log(err)
-                throw 'failed to aquire status'})
-                console.log('status', status)
-
-                
-                
-                // const ls = await git('cd ./tempRepo && ls')
-                // console.log('ls', ls)
-
-console.log(`git config --global user.email "${user.email}"`)
-            await git(`git config --global user.email "${user.email}"`).catch(err => { 
-                console.log(err)
-                throw ' failed to add files'})
-console.log(`git config --global user.name "${user.first} ${user.last}"`)
-            await git(`git config --global user.name "${user.first} ${user.last}"`).catch(err => { 
-                console.log(err)
-                throw ' failed to add files'})
-
             let n = user.frequency
             if(num){
                 n = num
@@ -200,23 +153,47 @@ console.log(`git config --global user.name "${user.first} ${user.last}"`)
             if(user.frequency==0){
                 n=1
             }
-            console.log('n', n)
+            console.log(`begin making ${n} commit(s) on behalf of ${user.first} ${user.last}`)
+        
+            const stopIfFails = true
+
+            await deleteContents('./tempRepo')
+            
+            //uses my credentials to authrize a push to the repo
+            console.log('git clone')
+            await git(`git clone https://${process.env.GITHUB_NAME}:${process.env.GITHUB_TOKEN}@github.com/MKerbleski/green-squares.git tempRepo`, stopIfFails).catch(err => { 
+                console.log(err)
+                throw 'failed to aquire status'})
+
+            //sets author to the user being called
+            console.log(`git config --global user.email "${user.email}"`)
+            await git(`git config --global user.email "${user.email}"`).catch(err => { 
+                console.log(err)
+                throw ' failed to add files'})
+
+            console.log(`git config --global user.name "${user.first} ${user.last}"`)
+            await git(`git config --global user.name "${user.first} ${user.last}"`).catch(err => { 
+                console.log(err)
+                throw ' failed to add files'})
+
             while(n > 0){
-                await appendFile(`tempRepo/square.txt`).catch(err => { 
+                console.log('modify file')
+                await appendFile(`tempRepo/square.txt`, "M").catch(err => { 
                     console.log(err)
-                    throw ' failed to write file'})
+                    throw 'failed to write file'})
+                console.log('git add')
                 await git('cd ./tempRepo && git add .').catch(err => { 
                     console.log(err)
-                    throw ' failed to add files'})
-                console.log(`cd ./tempRepo && git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`)
+                    throw 'failed to add files'})
+                console.log(`git commit`)
                 await git(`cd ./tempRepo && git commit -m"hello, git." --author="${user.first} ${user.last} <${user.email}>"`).catch(err => { 
                     console.log(err)
-                    throw ' failed to commit'})
+                    throw 'failed to commit'})
                 n--    
             }
 
-           const pushed =  await git('cd ./tempRepo && git push origin HEAD')
-            console.log('pushed', pushed)
+            console.log('git push')
+            await git('cd ./tempRepo && git push origin HEAD')
 
             await deleteContents('./tempRepo')
            
@@ -224,7 +201,6 @@ console.log(`git config --global user.name "${user.first} ${user.last}"`)
         } catch (err) {
             reject(err)
         }
-
     })
 }
 
@@ -234,11 +210,13 @@ router.get('/git/:numOfCommits/:email', async (req, res, next) => {
             console.log('err', err)
             throw err
         })
-        console.log('get numOfCommits', user[0])
+
+        console.log(`make ${req.params.numOfCommits} for `, user[0].first, user[0].last)
         await makeNumOfCommits(user[0], req.params.numOfCommits).catch(err => {
             console.log('err', err)
             throw err
         })
+
         res.status(200).send(`commits made`)
     } catch (err) {
         console.log('endpoint catch', err)
@@ -247,7 +225,7 @@ router.get('/git/:numOfCommits/:email', async (req, res, next) => {
 })
 
 router.post('/user', async (req, res, next) => {
-    console.log('post user', req.body)
+    console.log('saving new user:', req.body)
     try {
         addUser(req.body).then(user => {
             res.status(201).json(user)
@@ -261,13 +239,13 @@ router.post('/user', async (req, res, next) => {
 })
 
 router.put('/user', async (req, res, next) => {
-    console.log('put user WIP')
+    console.log('updating user: ', req.body)
     try {
         const updatedUser = await updateUser(req.body).catch(err => {
             console.log('err', err)
             throw err
         })
-        console.log(updatedUser)
+        console.log('updated user', updatedUser)
         res.status(200).send(`user updated`)
     } catch (err) {
         console.log('endpoint catch', err)
@@ -277,8 +255,8 @@ router.put('/user', async (req, res, next) => {
 
 router.get('/:email', async (req, res, next) => {
     try {
+        console.log('get user', user)
         const user = await getUser(req.params.email)
-        console.log('user', user)
         if(user[0]){
             res.send(user) 
         } else {
