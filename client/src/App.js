@@ -72,7 +72,9 @@ export default function App (){
 					...state,
 					first, last, frequency, email
 				})
-			} 
+			} else {
+				setReturningUser(false)
+			}
 			setLoggedin(true)
 		}).catch(err => {
 			console.log('err', err)

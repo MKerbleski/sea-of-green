@@ -255,8 +255,8 @@ router.put('/user', async (req, res, next) => {
 
 router.get('/:email', async (req, res, next) => {
     try {
-        console.log('get user', user)
         const user = await getUser(req.params.email)
+        console.log('get user', user)
         if(user[0]){
             res.send(user) 
         } else {
