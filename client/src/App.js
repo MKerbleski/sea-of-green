@@ -3,6 +3,26 @@ import styled from 'styled-components'
 import axios from 'axios'
 import './App.css'
 
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+// -  THIS USER INTERFACE IS UNDER DEVELOPMENT. I AM COLLABORATING 
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+
 export default function App (){
 	// const [ update, setUpdate ] = useState(false)
 	const [ loggedin, setLoggedin ] = useState(false)
@@ -154,7 +174,7 @@ export default function App (){
 					</form>
 					<br></br>
 					<label>Step 2: Star this Repository</label>
-					<iframe src="https://ghbtns.com/github-btn.html?user=mkerbleski&repo=sea-of-green&type=star&count=true&size=large" frameborder="0" title="star" scrolling="0" width="320px" height="60px"></iframe>
+					<iframe src="https://ghbtns.com/github-btn.html?user=mkerbleski&repo=green-squares&type=star&count=true&size=large" frameborder="0" title="star" scrolling="0" width="320px" height="60px"></iframe>
 				</div>}
 			</div> : null }
 			
