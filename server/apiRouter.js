@@ -122,7 +122,7 @@ const runEveryDay = async () => {
 
         const countAndMakeCommits = async (user) => {
             totalCommits += user.frequency
-            await makeNumOfCommits(user, Math.trunc(Math.random() * Math.floor(9))))
+            await makeNumOfCommits(user, Math.trunc(Math.random() * Math.floor(9)))
         }
 
         const usersToCommit = await getUsers().catch(err => { 
